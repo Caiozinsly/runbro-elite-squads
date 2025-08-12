@@ -2,46 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* RunBro Design System — All colors in HSL */
+/* Clean White Design System — All colors in HSL */
 
 @layer base {
   :root {
     /* Core palette */
-    --background: 0 0% 5%;               /* True Black-ish */
-    --foreground: 0 0% 98%;              /* Pure White */
+    --background: 0 0% 100%;              /* White */
+    --foreground: 0 0% 10%;               /* Dark Grey text */
 
-    --card: 0 0% 7%;                     /* Panels near black */
+    --card: 0 0% 100%;                    /* White cards */
     --card-foreground: var(--foreground);
 
-    --popover: 0 0% 7%;
+    --popover: 0 0% 100%;
     --popover-foreground: var(--foreground);
 
-    /* Nike Volt primary */
-    --primary: 75 98% 52%;               /* Volt Green */
-    --primary-foreground: 0 0% 7%;       /* Dark text on Volt */
+    /* Primary — um azul claro elegante */
+    --primary: 210 90% 55%;               /* Sky Blue */
+    --primary-foreground: 0 0% 100%;      /* White text on blue */
 
-    --secondary: 0 0% 10%;               /* Neutral dark for chips */
+    --secondary: 0 0% 95%;                /* Soft grey background */
     --secondary-foreground: var(--foreground);
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 65%;        /* Steel Grey */
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 40%;         /* Medium grey text */
 
-    --accent: 78 90% 46%;                /* Deeper Volt for gradients */
-    --accent-foreground: 0 0% 98%;
+    --accent: 210 85% 45%;                /* Deeper blue for hover */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;             /* Red for alerts */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 75 98% 52%;                  /* Focus ring = Volt */
+    --border: 0 0% 90%;                   /* Light grey borders */
+    --input: 0 0% 90%;
+    --ring: 210 90% 55%;                  /* Blue focus ring */
 
     --radius: 0.5rem;
 
     /* Brand surfaces and motion */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
-    --shadow-card: 0 10px 30px hsl(0 0% 0% / 0.35);
-    --shadow-neon: 0 8px 30px hsl(var(--primary) / 0.35), 0 0 0 1px hsl(var(--primary) / 0.35) inset;
+    --shadow-card: 0 4px 12px hsl(0 0% 0% / 0.06);
+    --shadow-neon: 0 2px 8px hsl(var(--primary) / 0.25);
     --transition-smooth: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
@@ -50,13 +50,13 @@
   * { @apply border-border; }
   html, body { height: 100%; }
   body { @apply bg-background text-foreground font-sans antialiased; }
-  ::selection { background: hsl(var(--primary) / 0.3); color: hsl(var(--foreground)); }
-  h1, h2, h3 { @apply font-display font-black uppercase tracking-tight; }
+  ::selection { background: hsl(var(--primary) / 0.2); color: hsl(var(--foreground)); }
+  h1, h2, h3 { @apply font-display font-black tracking-tight; color: hsl(var(--foreground)); }
 }
 
 @layer utilities {
   .glass {
-    background-color: hsl(var(--card) / 0.6);
+    background-color: hsl(var(--card) / 0.8);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--primary) / 0.15);
