@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-muted-foreground/20 bg-background/60 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="font-black tracking-tight text-xl">
+        <Link to="/" className="font-display font-black uppercase tracking-tight text-xl">
           <span className="gradient-text">RunBro</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">

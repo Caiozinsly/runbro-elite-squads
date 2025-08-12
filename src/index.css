@@ -7,35 +7,36 @@
 @layer base {
   :root {
     /* Core palette */
-    --background: 213 28% 7%;           /* Abyss Black #0D1117 */
-    --foreground: 210 26% 92%;          /* Cloud White #E6EDF3 */
+    --background: 0 0% 5%;               /* True Black-ish */
+    --foreground: 0 0% 98%;              /* Pure White */
 
-    --card: 213 25% 10%;                /* Deep Slate #161B22 */
+    --card: 0 0% 7%;                     /* Panels near black */
     --card-foreground: var(--foreground);
 
-    --popover: 213 25% 10%;
+    --popover: 0 0% 7%;
     --popover-foreground: var(--foreground);
 
-    --primary: 199 92% 60%;             /* Electric Blue #38bdf8 */
-    --primary-foreground: 210 40% 98%;
+    /* Nike Volt primary */
+    --primary: 75 98% 52%;               /* Volt Green */
+    --primary-foreground: 0 0% 7%;       /* Dark text on Volt */
 
-    --secondary: 213 20% 14%;           /* Subtle panels / chips */
+    --secondary: 0 0% 10%;               /* Neutral dark for chips */
     --secondary-foreground: var(--foreground);
 
-    --muted: 213 20% 14%;
-    --muted-foreground: 213 10% 58%;    /* Steel Grey #8B949E */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;        /* Steel Grey */
 
-    --accent: 234 92% 74%;              /* Cosmic Violet #818cf8 */
-    --accent-foreground: 210 40% 98%;
+    --accent: 78 90% 46%;                /* Deeper Volt for gradients */
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 213 18% 20%;
-    --input: 213 18% 20%;
-    --ring: 199 92% 60%;                /* Focus ring aligned to primary */
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 75 98% 52%;                  /* Focus ring = Volt */
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     /* Brand surfaces and motion */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
@@ -50,6 +51,7 @@
   html, body { height: 100%; }
   body { @apply bg-background text-foreground font-sans antialiased; }
   ::selection { background: hsl(var(--primary) / 0.3); color: hsl(var(--foreground)); }
+  h1, h2, h3 { @apply font-display font-black uppercase tracking-tight; }
 }
 
 @layer utilities {
@@ -66,5 +68,22 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -2px;
+    height: 2px; width: 100%;
+    background: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 200ms ease;
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
   }
 }
