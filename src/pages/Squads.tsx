@@ -1,16 +1,44 @@
 import SEO from "@/components/common/SEO";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-
-const squads = Array.from({ length: 9 }).map((_, i) => ({
-  name: `Squad ${i + 1}`,
-  cidade: ["São Paulo", "Porto", "Lisboa", "Rio", "Curitiba"][i % 5],
-  membros: `${3 + (i % 4)}/${5 + (i % 3)} Membros`,
-  ritmo: ["4:50", "5:10", "5:30", "6:00"][i % 4],
-}));
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSquads } from "@/hooks/useSquads";
+import { SquadCard } from "@/components/squads/SquadCard";
+import { useState } from "react";
 
 const Squads = () => {
+  const { data: squads, isLoading } = useSquads();
+  const [searchCity, setSearchCity] = useState("");
+  const [rhythmFilter, setRhythmFilter] = useState("");
+  const [trainingDays, setTrainingDays] = useState("");
+
+  const filteredSquads = squads?.filter(squad => {
+    const cityMatch = !searchCity || squad.cidade.toLowerCase().includes(searchCity.toLowerCase());
+    
+    let rhythmMatch = true;
+    if (rhythmFilter) {
+      const squadRhythm = parseFloat(squad.ritmo_min.replace(':', '.'));
+      switch (rhythmFilter) {
+        case "elite":
+          rhythmMatch = squadRhythm <= 5.00;
+          break;
+        case "forte":
+          rhythmMatch = squadRhythm > 5.00 && squadRhythm <= 5.30;
+          break;
+        case "medio":
+          rhythmMatch = squadRhythm > 5.30 && squadRhythm <= 6.00;
+          break;
+        case "leve":
+          rhythmMatch = squadRhythm > 6.00;
+          break;
+      }
+    }
+
+    const daysMatch = !trainingDays || squad.dias_treino?.toString() === trainingDays.replace('x', '');
+
+    return cityMatch && rhythmMatch && daysMatch;
+  });
+
   return (
     <main>
       <SEO title="RunBro: Encontre seu Squad" description="Pesquise e explore Squads por cidade, ritmo e dias de treino. Encontre sua equipe perfeita." />
@@ -21,10 +49,14 @@ const Squads = () => {
 
         <div className="glass rounded-xl p-4 md:p-6 shadow-card mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
           <div className="md:col-span-2">
-            <Input placeholder="Procurar por cidade..." />
+            <Input 
+              placeholder="Procurar por cidade..." 
+              value={searchCity}
+              onChange={(e) => setSearchCity(e.target.value)}
+            />
           </div>
           <div>
-            <Select>
+            <Select value={rhythmFilter} onValueChange={setRhythmFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Ritmo Médio" />
               </SelectTrigger>
@@ -37,7 +69,7 @@ const Squads = () => {
             </Select>
           </div>
           <div>
-            <Select>
+            <Select value={trainingDays} onValueChange={setTrainingDays}>
               <SelectTrigger>
                 <SelectValue placeholder="Dias de Treino" />
               </SelectTrigger>
@@ -51,20 +83,30 @@ const Squads = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {squads.map((s) => (
-            <article key={s.name} className="glass rounded-xl overflow-hidden shadow-card">
-              <div className="h-28 bg-gradient-to-r from-primary/40 to-accent/40" />
-              <div className="p-5">
-                <h3 className="font-semibold text-lg">{s.name}</h3>
-                <p className="text-sm text-muted-foreground">{s.cidade}</p>
-                <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
-                  <div className="rounded-md bg-secondary/60 p-2 text-center">{s.membros}</div>
-                  <div className="rounded-md bg-secondary/60 p-2 text-center">{s.ritmo} min/km</div>
-                  <Button variant="hero" size="sm" className="w-full">Pedir para Entrar</Button>
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass rounded-xl overflow-hidden shadow-card">
+                <Skeleton className="h-28 w-full" />
+                <div className="p-5 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                  </div>
+                  <Skeleton className="h-8 w-full" />
                 </div>
               </div>
-            </article>
-          ))}
+            ))
+          ) : filteredSquads?.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground">Nenhum squad encontrado com os filtros selecionados.</p>
+            </div>
+          ) : (
+            filteredSquads?.map((squad) => (
+              <SquadCard key={squad.id} squad={squad} />
+            ))
+          )}
         </div>
       </section>
     </main>

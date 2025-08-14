@@ -14,7 +14,173 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      mural_photos: {
+        Row: {
+          approved: boolean | null
+          caption: string | null
+          created_at: string | null
+          id: string
+          photo_url: string
+          squad_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          approved?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          photo_url: string
+          squad_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          approved?: boolean | null
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          photo_url?: string
+          squad_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mural_photos_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mural_photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          points: number | null
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          points?: number | null
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          points?: number | null
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      squad_members: {
+        Row: {
+          id: string
+          joined_at: string | null
+          squad_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          squad_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          squad_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squad_members_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "squad_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      squads: {
+        Row: {
+          admin_id: string | null
+          cidade: string
+          created_at: string | null
+          description: string | null
+          dias_treino: number | null
+          id: string
+          image_url: string | null
+          max_members: number | null
+          name: string
+          ritmo_max: string | null
+          ritmo_min: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          cidade: string
+          created_at?: string | null
+          description?: string | null
+          dias_treino?: number | null
+          id?: string
+          image_url?: string | null
+          max_members?: number | null
+          name: string
+          ritmo_max?: string | null
+          ritmo_min?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          cidade?: string
+          created_at?: string | null
+          description?: string | null
+          dias_treino?: number | null
+          id?: string
+          image_url?: string | null
+          max_members?: number | null
+          name?: string
+          ritmo_max?: string | null
+          ritmo_min?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "squads_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

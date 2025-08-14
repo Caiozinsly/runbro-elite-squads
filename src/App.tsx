@@ -12,30 +12,33 @@ import Hall from "./pages/Hall";
 import Mural from "./pages/Mural";
 import Parceiros from "./pages/Parceiros";
 import { HelmetProvider } from "react-helmet-async";
+import { AuthProvider } from "./hooks/useAuth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <HelmetProvider>
-        <>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/squads" element={<Squads />} />
-            <Route path="/hall" element={<Hall />} />
-            <Route path="/mural" element={<Mural />} />
-            <Route path="/parceiros" element={<Parceiros />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Footer />
-        </>
-      </HelmetProvider>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <HelmetProvider>
+          <>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/squads" element={<Squads />} />
+              <Route path="/hall" element={<Hall />} />
+              <Route path="/mural" element={<Mural />} />
+              <Route path="/parceiros" element={<Parceiros />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Footer />
+          </>
+        </HelmetProvider>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
