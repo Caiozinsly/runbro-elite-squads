@@ -12,7 +12,10 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const { signInWithGoogle, loading } = useAuth();
 
   const handleGoogleSignIn = async () => {
-    await signInWithGoogle();
+    // Adiciona o redirectTo aqui
+    await signInWithGoogle({
+      redirectTo: 'https://runbro-squads.lovable.app'
+    });
     onOpenChange(false);
   };
 
