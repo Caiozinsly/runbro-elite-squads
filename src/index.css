@@ -44,6 +44,37 @@
     --shadow-neon: 0 2px 8px hsl(var(--primary) / 0.25);
     --transition-smooth: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  .dark {
+    /* Dark mode colors */
+    --background: 240 10% 3.9%;              /* Dark background */
+    --foreground: 0 0% 98%;                  /* Light text */
+
+    --card: 240 10% 3.9%;                   /* Dark cards */
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 210 90% 55%;                  /* Keep same blue */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 15.9%;             /* Dark grey */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;       /* Lighter grey text */
+
+    --accent: 210 85% 45%;                   /* Keep same accent */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;            /* Dark red */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;                /* Dark borders */
+    --input: 240 3.7% 15.9%;
+    --ring: 210 90% 55%;                     /* Keep blue focus ring */
+  }
 }
 
 @layer base {
