@@ -5,6 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSquads } from "@/hooks/useSquads";
 import { SquadCard } from "@/components/squads/SquadCard";
 import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce"; // Importe o novo hook
+
 
 const Squads = () => {
   const { data: squads, isLoading } = useSquads();
@@ -12,8 +14,12 @@ const Squads = () => {
   const [rhythmFilter, setRhythmFilter] = useState("");
   const [trainingDays, setTrainingDays] = useState("");
 
+  // Crie um valor "debounced" para a busca da cidade. A filtragem só usará este valor.
+  const debouncedSearchCity = useDebounce(searchCity, 300); // Atraso de 300ms
+
   const filteredSquads = squads?.filter(squad => {
-    const cityMatch = !searchCity || squad.cidade.toLowerCase().includes(searchCity.toLowerCase());
+    // Use o valor "debounced" na sua lógica de filtro
+    const cityMatch = !debouncedSearchCity || squad.cidade.toLowerCase().includes(debouncedSearchCity.toLowerCase());
     
     let rhythmMatch = true;
     if (rhythmFilter) {
