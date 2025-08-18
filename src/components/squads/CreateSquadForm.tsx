@@ -1,16 +1,12 @@
-// components/squads/CreateSquadForm.tsx
-
-'use client';
-
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation'; // Usando o router do Next.js 13+ App Router
+import { useNavigate } from 'react-router-dom';
 
 export const CreateSquadForm = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   
   // Estados para cada campo do formulário
   const [nome, setNome] = useState('');
