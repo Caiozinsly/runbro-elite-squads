@@ -32,9 +32,23 @@ export interface SquadMember {
 }
 
 export function useSquads() {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['squads'],
+    queryKey: ['squads', user ? 'auth' : 'anon'],
     queryFn: async () => {
+      // If user is not authenticated, avoid joining profiles (blocked by RLS)
+      if (!user) {
+        const { data, error } = await supabase
+          .from('squads')
+          .select('*');
+
+        if (error) throw error;
+
+        const squads = data || [];
+        // Provide a minimal shape without members to keep UI working
+        return squads.map((s: any) => ({ ...s, member_count: 0 })) as Squad[];
+      }
+
       const { data, error } = await supabase
         .from('squads')
         .select(`
