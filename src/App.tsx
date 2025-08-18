@@ -14,6 +14,7 @@ import Parceiros from "./pages/Parceiros";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./hooks/useAuth";
 import { DashboardPage } from './pages/DashboardPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,7 @@ const App = () => (
               <Route path="/hall" element={<Hall />} />
               <Route path="/mural" element={<Mural />} />
               <Route path="/parceiros" element={<Parceiros />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
