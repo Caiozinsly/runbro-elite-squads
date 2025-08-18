@@ -1,12 +1,13 @@
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Não precisamos mais deste
 import { NavLink } from "react-router-dom";
 import { RunnerIcon } from "@/components/icons/RunnerIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { useState } from "react";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { ProfileAvatar } from "@/components/ProfileAvatar"; // NOVO: Importamos nosso novo componente
 
 const navLinks = [
   { to: "/squads", label: "Squads" },
@@ -22,7 +23,8 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
-  const { user, signOut } = useAuth();
+  // MODIFICADO: Pegamos também 'profile' e 'loading' do hook
+  const { user, profile, loading, signOut } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -31,9 +33,8 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
   };
 
   const handleAuthClick = () => {
-    if (user) {
-      handleSignOut();
-    } else {
+    // A lógica original para abrir o modal de autenticação estava ótima
+    if (!user) {
       setAuthModalOpen(true);
     }
   };
@@ -51,21 +52,26 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
             
             {/* User section */}
             <div className="py-6 border-b border-muted-foreground/20">
-              {user ? (
+              {loading ? (
+                // NOVO: Adicionamos um estado de carregamento para a UI
+                <p className="text-sm text-muted-foreground">Carregando perfil...</p>
+              ) : profile ? (
+                // MODIFICADO: Usamos 'profile' para a lógica de exibição
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={user.user_metadata.avatar_url} />
-                    <AvatarFallback>
-                      <User className="h-6 w-6" />
-                    </AvatarFallback>
-                  </Avatar>
+                  {/* MODIFICADO: Substituímos o <Avatar> pelo <ProfileAvatar> */}
+                  <ProfileAvatar
+                    avatarUrl={profile.avatar_url}
+                    userName={profile.full_name}
+                    rank={profile.rank}
+                  />
                   <div className="flex-1">
-                    <p className="font-semibold">{user.user_metadata.full_name || user.email}</p>
-                    <p className="text-sm text-muted-foreground">Membro Elite</p>
+                    {/* MODIFICADO: Usamos dados do 'profile' em vez de 'user.user_metadata' */}
+                    <p className="font-semibold">{profile.full_name}</p>
+                    <p className="text-sm text-muted-foreground capitalize">Membro {profile.rank}</p>
                   </div>
                 </div>
               ) : (
-                <Button 
+                <Button
                   onClick={handleAuthClick}
                   className="w-full"
                   variant="hero"
