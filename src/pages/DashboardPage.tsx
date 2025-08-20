@@ -13,34 +13,42 @@ export function DashboardPage() {
   const handleAddRun = async () => {
     if (!profile || kms <= 0) return;
 
-    // 1. Chamamos a função do Supabase (RPC)
-    const { error } = await supabase.rpc('add_kms', { 
-      user_id: profile.id, 
-      kms_to_add: kms 
-    });
+    try {
+      const { error } = await (supabase as any).rpc('add_kms', { 
+        user_id: profile.id, 
+        kms_to_add: kms 
+      });
 
-    if (error) {
-      alert(`Erro ao adicionar corrida: ${error.message}`);
-    } else {
-      alert(`${kms} KMs adicionados com sucesso!`);
-      // 2. Atualizamos os dados na UI
-      await refreshProfile();
-      setKms(0);
+      if (error) {
+        alert(`Erro ao adicionar corrida: ${error.message}`);
+      } else {
+        alert(`${kms} KMs adicionados com sucesso!`);
+        await refreshProfile();
+        setKms(0);
+      }
+    } catch (error) {
+      console.error('Error calling add_kms:', error);
+      alert('Erro ao adicionar corrida');
     }
   };
 
   const handleCompleteCard = async () => {
     if (!profile) return;
 
-    const { error } = await supabase.rpc('increment_cards', {
-      user_id: profile.id
-    });
+    try {
+      const { error } = await (supabase as any).rpc('increment_cards', {
+        user_id: profile.id
+      });
 
-    if (error) {
-      alert(`Erro ao completar o card: ${error.message}`);
-    } else {
-      alert(`Card completado!`);
-      await refreshProfile();
+      if (error) {
+        alert(`Erro ao completar o card: ${error.message}`);
+      } else {
+        alert(`Card completado!`);
+        await refreshProfile();
+      }
+    } catch (error) {
+      console.error('Error calling increment_cards:', error);
+      alert('Erro ao completar card');
     }
   };
 
@@ -54,8 +62,8 @@ export function DashboardPage() {
       
       <div className="p-4 border rounded-lg">
         <h2 className="font-semibold">Estatísticas Atuais</h2>
-        <p>KMs Totais: {profile.km_percorridos}</p>
-        <p>Cards Completados: {profile.cards_completados}</p>
+        <p>KMs Totais: {profile.km_percorridos || 0}</p>
+        <p>Cards Completados: {profile.cards_completados || 0}</p>
       </div>
 
       <div className="space-y-2">

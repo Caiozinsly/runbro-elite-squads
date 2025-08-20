@@ -60,11 +60,11 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                   <ProfileAvatar
                     avatarUrl={profile.avatar_url}
                     userName={profile.full_name}
-                    rank={profile.rank}
+                    rank="elite"
                   />
                   <div className="flex-1">
                     <p className="font-semibold">{profile.full_name}</p>
-                    <p className="text-sm text-muted-foreground capitalize">Membro {profile.rank}</p>
+                    <p className="text-sm text-muted-foreground capitalize">Membro Elite</p>
                   </div>
                 </div>
               ) : (

@@ -1,21 +1,20 @@
-// src/hooks/useauth.tsx - VERSÃO ATUALIZADA
-
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 
-// ... (interface Profile continua a mesma)
 interface Profile {
   id: string;
-  full_name: string;
-  avatar_url: string;
-  rank: string;
+  username: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  points: number;
+  created_at: string | null;
+  updated_at: string | null;
   cards_completados: number;
   km_percorridos: number;
 }
 
 
-// MODIFICADO: Adicionamos refreshProfile
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -23,7 +22,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: (options?: { redirectTo?: string }) => Promise<void>;
   signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>; // NOVO
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +33,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // MODIFICADO: Usamos useCallback para otimizar a função de fetch
   const fetchProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -46,42 +44,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Erro ao buscar perfil:", error);
       setProfile(null);
     } else {
-      setProfile(data);
+      // Type assertion para garantir compatibilidade
+      const profileData = data as any;
+      const profile: Profile = {
+        id: profileData.id,
+        username: profileData.username,
+        full_name: profileData.full_name,
+        avatar_url: profileData.avatar_url,
+        points: profileData.points || 0,
+        created_at: profileData.created_at,
+        updated_at: profileData.updated_at,
+        cards_completados: profileData.cards_completados || 0,
+        km_percorridos: Number(profileData.km_percorridos) || 0,
+      };
+      setProfile(profile);
     }
   }, []);
 
   useEffect(() => {
-    // ... (onAuthStateChange e getSession continuam os mesmos, mas agora usam a função otimizada)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         const currentUser = session?.user ?? null;
         setUser(currentUser);
-        if (currentUser) { fetchProfile(currentUser.id); } 
-        else { setProfile(null); }
+        if (currentUser) { 
+          fetchProfile(currentUser.id); 
+        } else { 
+          setProfile(null); 
+        }
         setLoading(false);
       }
     );
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       const currentUser = session?.user ?? null;
       setUser(currentUser);
-      if (currentUser) { fetchProfile(currentUser.id); }
+      if (currentUser) { 
+        fetchProfile(currentUser.id); 
+      }
       setLoading(false);
     });
+    
     return () => subscription.unsubscribe();
   }, [fetchProfile]);
   
-  // NOVO: Função para refrescar os dados do perfil manualmente
   const refreshProfile = async () => {
     if (user) {
       await fetchProfile(user.id);
     }
   };
 
-  // ... (signInWithGoogle e signOut permanecem iguais)
-  const signInWithGoogle = async (options?: { redirectTo?: string }) => {/* ...código... */};
-  const signOut = async () => {/* ...código... */};
+  const signInWithGoogle = async (options?: { redirectTo?: string }) => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: options?.redirectTo || window.location.origin,
+      },
+    });
+    if (error) {
+      console.error('Error signing in with Google:', error.message);
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error.message);
+      throw error;
+    }
+  };
 
   const value = {
     user,
