@@ -62,27 +62,33 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          cards_completados: number | null
           created_at: string | null
           full_name: string | null
           id: string
+          km_percorridos: number | null
           points: number | null
           updated_at: string | null
           username: string
         }
         Insert: {
           avatar_url?: string | null
+          cards_completados?: number | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          km_percorridos?: number | null
           points?: number | null
           updated_at?: string | null
           username: string
         }
         Update: {
           avatar_url?: string | null
+          cards_completados?: number | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          km_percorridos?: number | null
           points?: number | null
           updated_at?: string | null
           username?: string
@@ -186,7 +192,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_kms: {
+        Args: { kms_to_add: number; user_id: string }
+        Returns: undefined
+      }
+      increment_cards: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
