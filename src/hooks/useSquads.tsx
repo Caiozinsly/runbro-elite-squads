@@ -31,6 +31,17 @@ export interface SquadMember {
   };
 }
 
+// Tipagem para os dados do formulário de criação
+export interface CreateSquadData {
+  name: string;
+  cidade: string;
+  description: string;
+  ritmo_min: string;
+  ritmo_max: string;
+  dias_treino: number;
+  max_members: number;
+}
+
 export function useSquads() {
   const { user } = useAuth();
   return useQuery({
@@ -183,5 +194,44 @@ export function useUserSquadStatus(squadId: string) {
       return data;
     },
     enabled: !!user && !!squadId,
+  });
+}
+
+// NOVO: Hook para criar um Squad
+export function useCreateSquad() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (squadData: CreateSquadData) => {
+      if (!user) throw new Error('Precisa estar autenticado para criar um squad.');
+
+      const { data, error } = await supabase
+        .from('squads')
+        .insert({
+          ...squadData,
+          admin_id: user.id,
+        })
+        .select()
+        .single(); // Para retornar o squad recém-criado
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      // Invalida a query de squads para atualizar a lista
+      queryClient.invalidateQueries({ queryKey: ['squads'] });
+      toast({
+        title: "Squad criado com sucesso!",
+        description: "O seu esquadrão está pronto para dominar as ruas.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao criar o squad",
+        description: error.message || "Não foi possível criar o squad. Tente novamente.",
+        variant: "destructive",
+      });
+    },
   });
 }
