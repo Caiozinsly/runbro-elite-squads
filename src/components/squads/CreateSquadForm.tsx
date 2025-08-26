@@ -1,110 +1,104 @@
+// src/components/squads/CreateSquadForm.tsx
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useCreateSquad, CreateSquadData } from '@/hooks/useSquads'; // Importe o hook e o tipo
+
+// Mapeamento de ritmos para valores min/max
+const rhythmMap: { [key: string]: { min: string, max: string } } = {
+  leve: { min: "6:01", max: "8:00" },
+  medio: { min: "5:31", max: "6:00" },
+  forte: { min: "5:01", max: "5:30" },
+  elite: { min: "3:00", max: "5:00" },
+};
 
 export const CreateSquadForm = () => {
   const navigate = useNavigate();
+  const createSquadMutation = useCreateSquad();
   
   // Estados para cada campo do formulário
-  const [nome, setNome] = useState('');
+  const [name, setName] = useState('');
   const [cidade, setCidade] = useState('');
-  const [descricao, setDescricao] = useState('');
+  const [description, setDescricao] = useState('');
   const [ritmo, setRitmo] = useState('');
-  const [diasTreino, setDiasTreino] = useState('');
-  const [limiteMembros, setLimiteMembros] = useState('');
+  const [dias_treino, setDiasTreino] = useState('');
+  const [max_members, setLimiteMembros] = useState('');
 
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
     setError(null);
 
-    const squadData = {
-      nome,
-      cidade,
-      descricao,
-      ritmo, // Ex: "medio"
-      dias_treino: parseInt(diasTreino), // Ex: 3
-      limite_membros: parseInt(limiteMembros), // Ex: 6
-    };
-
-    try {
-      // A lógica de envio para o backend virá aqui
-      // const response = await fetch('/api/squads', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(squadData),
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error('Não foi possível criar o squad. Tente novamente.');
-      // }
-
-      // const newSquad = await response.json();
-      
-      console.log('Dados a serem enviados:', squadData);
-      // Simulação de sucesso
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Redirecionar para a página do squad recém-criado (exemplo)
-      // router.push(`/squads/${newSquad.id}`);
-      
-      alert('Squad criado com sucesso! (Simulação)');
-
-
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+    if (!ritmo || !dias_treino || !max_members) {
+      setError("Por favor, preencha todos os campos.");
+      return;
     }
+
+    const squadData: CreateSquadData = {
+      name,
+      cidade,
+      description,
+      ritmo_min: rhythmMap[ritmo].min,
+      ritmo_max: rhythmMap[ritmo].max,
+      dias_treino: parseInt(dias_treino),
+      max_members: parseInt(max_members),
+    };
+    
+    createSquadMutation.mutate(squadData, {
+      onSuccess: () => {
+        // Redireciona para a página de squads após o sucesso
+        navigate('/squads');
+      },
+      onError: (err: any) => {
+        setError(err.message || 'Ocorreu um erro.');
+      }
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto bg-gray-800/50 border border-gray-700 p-8 rounded-xl">
-      <h2 className="text-2xl font-bold text-center text-white">Crie o seu Squad</h2>
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto glass p-8 rounded-xl shadow-card">
       
       {/* Nome do Squad */}
       <div>
-        <label htmlFor="nome" className="block text-sm font-medium mb-1 text-gray-300">Nome do Squad</label>
-        <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Corredores da Madrugada" required />
+        <label htmlFor="nome" className="block text-sm font-medium mb-1 text-foreground/80">Nome do Squad</label>
+        <Input id="nome" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Corredores da Madrugada" required />
       </div>
       
       {/* Cidade */}
       <div>
-        <label htmlFor="cidade" className="block text-sm font-medium mb-1 text-gray-300">Cidade</label>
+        <label htmlFor="cidade" className="block text-sm font-medium mb-1 text-foreground/80">Cidade</label>
         <Input id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Ex: São Paulo" required />
       </div>
 
       {/* Descrição */}
       <div>
-        <label htmlFor="descricao" className="block text-sm font-medium mb-1 text-gray-300">Descrição</label>
-        <Textarea id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descreva o objetivo e a vibe do seu squad." required />
+        <label htmlFor="descricao" className="block text-sm font-medium mb-1 text-foreground/80">Descrição</label>
+        <Textarea id="descricao" value={description} onChange={(e) => setDescricao(e.target.value)} placeholder="Descreva o objetivo e a vibe do seu squad." required />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Ritmo Médio */}
         <div>
-          <label htmlFor="ritmo" className="block text-sm font-medium mb-1 text-gray-300">Ritmo Médio</label>
-          <Select value={ritmo} onValueChange={setRitmo}>
+          <label htmlFor="ritmo" className="block text-sm font-medium mb-1 text-foreground/80">Ritmo Médio</label>
+          <Select value={ritmo} onValueChange={setRitmo} required>
             <SelectTrigger><SelectValue placeholder="Selecione o ritmo" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="leve">6:00 min/km +</SelectItem>
-              <SelectItem value="medio">5:30 - 6:00 min/km</SelectItem>
-              <SelectItem value="forte">5:00 - 5:30 min/km</SelectItem>
-              <SelectItem value="elite">Abaixo de 5:00 min/km</SelectItem>
+              <SelectItem value="leve">6:00+</SelectItem>
+              <SelectItem value="medio">5:30 - 6:00</SelectItem>
+              <SelectItem value="forte">5:00 - 5:30</SelectItem>
+              <SelectItem value="elite">≤ 5:00</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Dias de Treino */}
         <div>
-          <label htmlFor="diasTreino" className="block text-sm font-medium mb-1 text-gray-300">Frequência</label>
-          <Select value={diasTreino} onValueChange={setDiasTreino}>
+          <label htmlFor="diasTreino" className="block text-sm font-medium mb-1 text-foreground/80">Frequência</label>
+          <Select value={dias_treino} onValueChange={setDiasTreino} required>
             <SelectTrigger><SelectValue placeholder="Treinos/semana" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="2">2x / semana</SelectItem>
@@ -117,8 +111,8 @@ export const CreateSquadForm = () => {
         
         {/* Limite de Membros */}
         <div>
-          <label htmlFor="limiteMembros" className="block text-sm font-medium mb-1 text-gray-300">Nº de Membros</label>
-          <Select value={limiteMembros} onValueChange={setLimiteMembros}>
+          <label htmlFor="limiteMembros" className="block text-sm font-medium mb-1 text-foreground/80">Nº de Membros</label>
+          <Select value={max_members} onValueChange={setLimiteMembros} required>
             <SelectTrigger><SelectValue placeholder="Tamanho máx." /></SelectTrigger>
             <SelectContent>
               <SelectItem value="4">Até 4 pessoas</SelectItem>
@@ -131,13 +125,13 @@ export const CreateSquadForm = () => {
       
       {/* Botão de Submissão */}
       <div>
-        <Button type="submit" disabled={isLoading} className="w-full bg-sky-500 hover:bg-sky-400">
-          {isLoading ? 'A criar Squad...' : 'Lançar Squad'}
+        <Button type="submit" disabled={createSquadMutation.isPending} className="w-full" variant="hero">
+          {createSquadMutation.isPending ? 'A criar Squad...' : 'Lançar Squad'}
         </Button>
       </div>
 
       {/* Mensagem de Erro */}
-      {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+      {error && <p className="text-sm text-destructive text-center">{error}</p>}
     </form>
   );
 };
