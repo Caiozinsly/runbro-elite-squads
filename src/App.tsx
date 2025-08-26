@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import Squads from "./pages/Squads";
 import Hall from "./pages/Hall";
 import Mural from "./pages/Mural";
 import Parceiros from "./pages/Parceiros";
+import CreateSquadPage from "./pages/CreateSquad"; // Importe a nova página
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./hooks/useAuth";
 import { DashboardPage } from './pages/DashboardPage';
@@ -30,6 +32,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/squads" element={<Squads />} />
+              {/* Rota Protegida para Criar Squad */}
+              <Route path="/squads/criar" element={<ProtectedRoute><CreateSquadPage /></ProtectedRoute>} />
               <Route path="/hall" element={<Hall />} />
               <Route path="/mural" element={<Mural />} />
               <Route path="/parceiros" element={<Parceiros />} />
