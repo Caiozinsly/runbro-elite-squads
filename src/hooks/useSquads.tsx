@@ -60,10 +60,23 @@ export function useSquad(squadId: string) {
     queryKey: ['squad', squadId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .rpc('get_squad_details', { squad_id_param: squadId })
+        .from('squads')
+        .select(`
+          *,
+          profiles!squads_admin_id_fkey(username, avatar_url)
+        `)
+        .eq('id', squadId)
         .single();
       if (error) throw new Error(error.message);
-      return data as SquadDetail;
+      
+      // Transform the data to match SquadDetail interface
+      const squad = {
+        ...data,
+        admin_username: data.profiles?.username || 'Admin',
+        admin_avatar_url: data.profiles?.avatar_url || null,
+      };
+      
+      return squad as SquadDetail;
     },
     enabled: !!squadId,
   });
