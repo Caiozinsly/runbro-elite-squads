@@ -19,6 +19,7 @@ export interface SquadListItem {
 
 export interface SquadDetail {
   id: string;
+  created_at: string;
   admin_id: string;
   nome: string;
   cidade: string;
@@ -29,7 +30,8 @@ export interface SquadDetail {
   horario: string;
   admin_username: string;
   admin_avatar_url: string | null;
-  is_public?: boolean;
+  is_public: boolean;
+  capa_url: string | null;
 }
 
 export interface SquadMember {
@@ -60,23 +62,10 @@ export function useSquad(squadId: string) {
     queryKey: ['squad', squadId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('squads')
-        .select(`
-          *,
-          profiles!squads_admin_id_fkey(username, avatar_url)
-        `)
-        .eq('id', squadId)
+        .rpc('get_squad_details', { squad_id_param: squadId })
         .single();
       if (error) throw new Error(error.message);
-      
-      // Transform the data to match SquadDetail interface
-      const squad = {
-        ...data,
-        admin_username: data.profiles?.username || 'Admin',
-        admin_avatar_url: data.profiles?.avatar_url || null,
-      };
-      
-      return squad as SquadDetail;
+      return data as SquadDetail;
     },
     enabled: !!squadId,
   });
