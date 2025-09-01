@@ -1,25 +1,16 @@
-// src/pages/CreateSquad.tsx
-import { CreateSquadForm } from "@/components/squads/CreateSquadForm";
-import SEO from "@/components/common/SEO";
+// src/pages/squads/CreateSquad.tsx
+'use client';
 
-const CreateSquadPage = () => {
+import CreateSquadForm from '@/components/squads/CreateSquadForm';
+
+export default function CreateSquadPage() {
   return (
-    <main>
-      <SEO 
-        title="RunBro: Crie seu Squad" 
-        description="Monte sua equipe, defina suas regras e comece a dominar as ruas. Crie seu squad de corrida agora." 
-      />
-      <section className="container mx-auto px-4 py-10 md:py-14">
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-black">Lançar um Novo Squad</h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            Defina a identidade da sua equipe, estabeleça o ritmo e convide outros corredores para se juntarem à sua jornada.
-          </p>
-        </header>
-        <CreateSquadForm />
-      </section>
-    </main>
+    <div className="container mx-auto max-w-3xl py-10">
+      <h1 className="text-center text-3xl font-extrabold mb-2">Lançar um Novo Squad</h1>
+      <p className="text-center text-muted-foreground mb-8">
+        Defina a identidade da sua equipe, estabeleça o ritmo e convide outros corredores para se juntarem à sua jornada.
+      </p>
+      <CreateSquadForm />
+    </div>
   );
-};
-
-export default CreateSquadPage;
+}

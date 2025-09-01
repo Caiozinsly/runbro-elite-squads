@@ -1,12 +1,21 @@
+// src/components/layout/Header.tsx (versão completa com menu mobile e de perfil)
+
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Menu, User, Sun, Moon } from "lucide-react";
+import { Menu, User, Sun, Moon, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { MobileMenu } from "./MobileMenu";
+import { MobileMenu } from "./MobileMenu"; // Lógica do menu mobile mantida
 import { useState, useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { to: "/squads", label: "Squads" },
@@ -17,10 +26,9 @@ const navLinks = [
 ];
 
 const Header = () => {
-  const { user } = useAuth();
-  const isMobile = useIsMobile();
+  const { user, profile, signOut, signInWithGoogle } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Lógica do menu mobile mantida
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -49,36 +57,49 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
             {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  `transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`
-                }
-              >
+              <NavLink key={link.to} to={link.to} className={({ isActive }) => `transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}>
                 {link.label}
               </NavLink>
             ))}
           </nav>
           
-          {/* Desktop Auth & Theme */}
+          {/* Desktop Auth & Theme (Com o novo Dropdown de Perfil) */}
           <div className="hidden md:flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="p-2"
-            >
+            <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             
-            {user ? (
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.user_metadata.avatar_url} />
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
+            {user && profile ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={profile.avatar_url ?? user.user_metadata.avatar_url} alt={profile.username ?? ''} />
+                      <AvatarFallback>{profile.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{profile.username}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/perfil" className="flex items-center cursor-pointer w-full">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Ver Perfil</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                     <LogOut className="mr-2 h-4 w-4" />
+                     <span>Sair</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button onClick={() => setAuthModalOpen(true)} variant="hero" size="sm">
                 Entrar na Elite
@@ -86,28 +107,19 @@ const Header = () => {
             )}
           </div>
           
-          {/* Mobile Menu Button */}
+          {/* Lógica do Menu Mobile (Restaurada) */}
           <div className="md:hidden flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              className="p-2"
-            >
+            <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(true)}
-              className="p-2"
-            >
+            <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(true)} className="p-2">
               <Menu className="h-5 w-5" />
             </Button>
           </div>
         </div>
       </header>
       
+      {/* Componentes de Modal (Restaurados) */}
       <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
       <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </>

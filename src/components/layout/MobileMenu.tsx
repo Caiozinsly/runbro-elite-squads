@@ -1,6 +1,6 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { RunnerIcon } from "@/components/icons/RunnerIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
@@ -30,12 +30,9 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
     onOpenChange(false);
   };
 
-  // ----- CORREÇÃO APLICADA AQUI -----
   const handleAuthClick = () => {
     if (!user) {
-      // Primeiro, fecha o menu lateral
       onOpenChange(false);
-      // Em seguida, abre o modal de autenticação
       setAuthModalOpen(true);
     }
   };
@@ -56,7 +53,7 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
               {loading ? (
                 <p className="text-sm text-muted-foreground">Carregando perfil...</p>
               ) : profile ? (
-                <div className="flex items-center gap-3">
+                <Link to="/perfil" onClick={() => onOpenChange(false)} className="flex items-center gap-3">
                   <ProfileAvatar
                     avatarUrl={profile.avatar_url}
                     userName={profile.full_name}
@@ -64,15 +61,11 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                   />
                   <div className="flex-1">
                     <p className="font-semibold">{profile.full_name}</p>
-                    <p className="text-sm text-muted-foreground capitalize">Membro Elite</p>
+                    <p className="text-sm text-muted-foreground capitalize">Ver Perfil</p>
                   </div>
-                </div>
+                </Link>
               ) : (
-                <Button
-                  onClick={handleAuthClick}
-                  className="w-full"
-                  variant="hero"
-                >
+                <Button onClick={handleAuthClick} className="w-full" variant="hero">
                   Entrar na Elite
                 </Button>
               )}

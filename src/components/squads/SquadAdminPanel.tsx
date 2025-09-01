@@ -1,0 +1,67 @@
+import { useSquadAdminMembers, useUpdateMemberStatus, useRemoveMember } from "@/hooks/useSquads";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+
+interface SquadAdminPanelProps {
+  squadId: string;
+}
+
+export const SquadAdminPanel = ({ squadId }: SquadAdminPanelProps) => {
+  const { data: members, isLoading } = useSquadAdminMembers(squadId);
+  const updateStatusMutation = useUpdateMemberStatus(squadId);
+  const removeMemberMutation = useRemoveMember(squadId);
+
+  const pendingRequests = members?.filter(m => m.status === 'pending') || [];
+  const approvedMembers = members?.filter(m => m.status === 'approved') || [];
+
+  if (isLoading) return <div>A carregar painel de admin...</div>;
+
+  return (
+    <div className="mt-8 border-t pt-6">
+      <h2 className="text-2xl font-bold mb-4">Painel de Admin</h2>
+
+      <section>
+        <h3 className="text-lg font-semibold">Pedidos Pendentes ({pendingRequests.length})</h3>
+        {pendingRequests.length > 0 ? (
+          <ul className="space-y-3 mt-3">
+            {pendingRequests.map(req => (
+              <li key={req.id} className="flex items-center justify-between bg-secondary p-3 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={req.profiles.avatar_url ?? ''} />
+                    <AvatarFallback>{req.profiles.username?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span>{req.profiles.username}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => updateStatusMutation.mutate({ memberId: req.id, status: 'rejected' })}>Recusar</Button>
+                  <Button size="sm" onClick={() => updateStatusMutation.mutate({ memberId: req.id, status: 'approved' })}>Aprovar</Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="text-sm text-muted-foreground mt-2">Nenhum pedido pendente.</p>}
+      </section>
+
+      <section className="mt-6">
+        <h3 className="text-lg font-semibold">Membros Atuais ({approvedMembers.length})</h3>
+        {approvedMembers.length > 0 ? (
+          <ul className="space-y-3 mt-3">
+            {approvedMembers.map(member => (
+              <li key={member.id} className="flex items-center justify-between bg-secondary p-3 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={member.profiles.avatar_url ?? ''} />
+                    <AvatarFallback>{member.profiles.username?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span>{member.profiles.username}</span>
+                </div>
+                <Button size="sm" variant="destructive" onClick={() => removeMemberMutation.mutate(member.id)}>Remover</Button>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="text-sm text-muted-foreground mt-2">Nenhum membro aprovado.</p>}
+      </section>
+    </div>
+  );
+};
