@@ -53,7 +53,7 @@ const ProfilePage = () => {
 
   return (
     <main className="container mx-auto px-4 py-10">
-      <SEO title={`Perfil de ${profile.username}`} />
+      <SEO title={`Perfil de ${profile.username}`} description={`Perfil de ${profile.username} - RunBro`} />
       
       <header className="flex items-center space-x-4 mb-8">
         <Avatar className="h-20 w-20">
@@ -71,15 +71,15 @@ const ProfilePage = () => {
       {/* Secção de Gamificação */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <div className="bg-secondary p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold">{profile.run_coins || 0}</div>
-          <div className="text-sm text-muted-foreground">RunCoins</div>
+          <div className="text-2xl font-bold">{profile.points || 0}</div>
+          <div className="text-sm text-muted-foreground">Pontos</div>
         </div>
         <div className="bg-secondary p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold">{profile.bro_gems || 0}</div>
-          <div className="text-sm text-muted-foreground">BroGems</div>
+          <div className="text-2xl font-bold">{profile.cards_completados || 0}</div>
+          <div className="text-sm text-muted-foreground">Cards Completados</div>
         </div>
         <div className="bg-secondary p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold">{profile.xp || 0}</div>
+          <div className="text-2xl font-bold">0</div>
           <div className="text-sm text-muted-foreground">XP</div>
         </div>
         <div className="bg-secondary p-4 rounded-lg text-center">
@@ -99,8 +99,8 @@ const ProfilePage = () => {
         ) : meusSquads.length > 0 ? (
           <ul className="space-y-3">
             {meusSquads.map(squad => (
-              <li key={squad.id} className="bg-secondary p-4 rounded-lg flex justify-between items-center">
-                <div>
+              <li key={squad.id} className="bg-secondary p-4 rounded-lg flex justify-between items-center hover:bg-secondary/80 transition-colors cursor-pointer">
+                <div onClick={() => window.location.href = `/squads/${squad.id}`}>
                   <h3 className="font-semibold">{squad.nome}</h3>
                   <p className="text-sm text-muted-foreground">{squad.cidade}</p>
                 </div>

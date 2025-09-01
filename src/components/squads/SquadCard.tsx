@@ -1,11 +1,11 @@
 // src/components/squads/SquadCard.tsx
 
-import { Squad } from "@/hooks/useSquads";
+import { SquadListItem } from "@/hooks/useSquads";
 import { Link } from "react-router-dom";
 import { Users, MapPin, Route } from "lucide-react";
 
 interface SquadCardProps {
-  squad: Squad;
+  squad: SquadListItem;
 }
 
 export const SquadCard = ({ squad }: SquadCardProps) => {

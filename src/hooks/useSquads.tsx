@@ -4,6 +4,7 @@ import { useAuth } from './useAuth';
 import { toast } from '@/components/ui/use-toast';
 
 // Interfaces
+export interface Squad extends SquadListItem {} // Alias for compatibility
 export interface SquadListItem {
   id: string;
   nome: string;
@@ -28,6 +29,7 @@ export interface SquadDetail {
   horario: string;
   admin_username: string;
   admin_avatar_url: string | null;
+  is_public?: boolean;
 }
 
 export interface SquadMember {
@@ -78,7 +80,7 @@ export function useSquadMembers(squadId: string) {
         .eq('squad_id', squadId)
         .eq('status', 'approved');
       if (error) throw new Error(error.message);
-      return data as SquadMember[];
+      return data as any[];
     },
     enabled: !!squadId,
   });
@@ -141,6 +143,26 @@ export function useUpdateMemberStatus(squadId: string) {
     onError: (error: any) => {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
     },
+  });
+}
+
+// Hook para verificar status do usuário em um squad
+export function useUserSquadStatus(squadId: string) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ['user-squad-status', squadId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from('squad_members')
+        .select('*')
+        .eq('squad_id', squadId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && !!squadId,
   });
 }
 
