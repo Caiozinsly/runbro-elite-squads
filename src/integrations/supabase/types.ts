@@ -250,6 +250,7 @@ export type Database = {
           admin_id: string
           capa_url: string | null
           cidade: string
+          codigo_convite: string | null
           created_at: string
           descricao: string | null
           distancia_km: number
@@ -265,6 +266,7 @@ export type Database = {
           admin_id: string
           capa_url?: string | null
           cidade: string
+          codigo_convite?: string | null
           created_at?: string
           descricao?: string | null
           distancia_km: number
@@ -280,6 +282,7 @@ export type Database = {
           admin_id?: string
           capa_url?: string | null
           cidade?: string
+          codigo_convite?: string | null
           created_at?: string
           descricao?: string | null
           distancia_km?: number
@@ -364,6 +367,10 @@ export type Database = {
       add_kms: {
         Args: { kms_to_add: number; user_id: string }
         Returns: undefined
+      }
+      generate_invite_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_squad_details: {
         Args: { squad_id_param: string }
