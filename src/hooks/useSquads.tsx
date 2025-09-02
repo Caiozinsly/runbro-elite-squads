@@ -86,7 +86,7 @@ export function useSquadMembers(squadId: string) {
         .eq('squad_id', squadId)
         .eq('status', 'approved');
       if (error) throw new Error(error.message);
-      return data as SquadMember[];
+      return data as any[];
     },
     enabled: !!squadId,
   });
