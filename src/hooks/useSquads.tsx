@@ -15,6 +15,11 @@ export interface SquadListItem {
   periodo_calculado: 'manha' | 'tarde' | 'noite';
   member_count: number;
   capa_url: string | null;
+  horario: string | null;
+  is_public: boolean;
+  admin_username: string | null;
+  admin_avatar_url: string | null;
+  codigo_convite: string | null;
 }
 
 // Usada na página de detalhes de um squad
@@ -67,9 +72,9 @@ export function useSquad(squadId: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .rpc('get_squad_details', { squad_id_param: squadId })
-        .single();
+        .maybeSingle();
       if (error) throw new Error(error.message);
-      return data as SquadDetail;
+      return data as SquadDetail | null;
     },
     enabled: !!squadId,
   });

@@ -20,7 +20,7 @@ const SquadDetailPage = () => {
 
   const isAdmin = user?.id === squad?.admin_id;
   const isMember = userStatus?.status === 'approved';
-  const isPublic = squad ? squad.is_public !== false : true; // Default to public if not specified
+  const isPublic = squad?.is_public;
 
   if (isLoadingSquad) {
     return <div className="text-center py-10">A carregar squad...</div>;

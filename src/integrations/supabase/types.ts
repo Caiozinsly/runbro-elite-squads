@@ -394,9 +394,12 @@ export type Database = {
       get_squads_com_detalhes: {
         Args: Record<PropertyKey, never>
         Returns: {
+          admin_avatar_url: string
           admin_id: string
+          admin_username: string
           capa_url: string
           cidade: string
+          codigo_convite: string
           created_at: string
           descricao: string
           distancia_km: number
