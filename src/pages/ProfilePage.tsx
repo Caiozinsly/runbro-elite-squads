@@ -77,13 +77,21 @@ const ProfilePage = () => {
         {/* Botão de Conexão Strava */}
         <div>
           {profile.strava_athlete_id ? (
-            <Badge variant="secondary">Conectado ao Strava</Badge>
+            <div className="flex flex-col items-end gap-2">
+              <Badge variant="secondary">Conectado ao Strava</Badge>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/strava">
+                  <LinkIcon className="h-4 w-4 mr-2" />
+                  Gerenciar Conexão
+                </Link>
+              </Button>
+            </div>
           ) : (
             <Button asChild>
-              <a href={stravaAuthUrl} className="flex items-center gap-2">
+              <Link to="/strava" className="flex items-center gap-2">
                 <LinkIcon className="h-4 w-4" />
                 Conectar com Strava
-              </a>
+              </Link>
             </Button>
           )}
         </div>

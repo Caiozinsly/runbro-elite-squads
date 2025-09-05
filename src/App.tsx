@@ -16,11 +16,12 @@ import Parceiros from "./pages/Parceiros";
 import CreateSquadPage from "./pages/CreateSquad";
 import ProfilePage from "./pages/ProfilePage";
 import SquadDetailPage from "./pages/SquadDetailPage";
+import StravaConnectionPage from "./pages/StravaConnection";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./hooks/useAuth";
 import { DashboardPage } from './pages/DashboardPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import SupabaseTestPage from './pages/SupabaseTestPage'; // <--  PÁGINA teste para import
+import SupabaseTestPage from './pages/SupabaseTestPage';
 
 const queryClient = new QueryClient();
 
@@ -36,11 +37,12 @@ const App = () => (
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/test" element={<SupabaseTestPage />} /> {/* <-- ADICIONE A NOVA ROTA */}
+                <Route path="/test" element={<SupabaseTestPage />} />
                 <Route path="/squads" element={<Squads />} />
                 <Route path="/squads/:squadId" element={<SquadDetailPage />} /> 
                 <Route path="/squads/criar" element={<ProtectedRoute><CreateSquadPage /></ProtectedRoute>} />
                 <Route path="/perfil" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                <Route path="/strava" element={<ProtectedRoute><StravaConnectionPage /></ProtectedRoute>} />
                 <Route path="/hall" element={<Hall />} />
                 <Route path="/mural" element={<Mural />} />
                 <Route path="/parceiros" element={<Parceiros />} />

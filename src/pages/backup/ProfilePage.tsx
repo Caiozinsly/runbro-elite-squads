@@ -51,7 +51,7 @@ const ProfilePage = () => {
 
   return (
     <main className="container mx-auto px-4 py-10">
-      <SEO title={`Perfil de ${profile.username}`} />
+      <SEO title={`Perfil de ${profile.username}`} description={`Perfil do usuário ${profile.username} - estatísticas e squads criados`} />
       
       <header className="flex items-center space-x-4 mb-8">
         <Avatar className="h-20 w-20">

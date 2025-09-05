@@ -6,7 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Menu, User, Sun, Moon, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { MobileMenu } from "./MobileMenu"; // Lógica do menu mobile mantida
+import { MobileMenu } from "./MobileMenu";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useState, useEffect } from "react";
 import {
   DropdownMenu,
@@ -68,6 +69,8 @@ const Header = () => {
             <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
+            
+            {user && profile && <NotificationBell />}
             
             {user && profile ? (
               <DropdownMenu>

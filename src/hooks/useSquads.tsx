@@ -15,6 +15,11 @@ export interface SquadListItem {
   periodo_calculado: 'manha' | 'tarde' | 'noite';
   member_count: number;
   capa_url: string | null;
+  is_public: boolean;
+  codigo_convite: string | null;
+  admin_username: string | null;
+  admin_avatar_url: string | null;
+  horario: string | null;
 }
 
 export interface SquadDetail {
@@ -79,7 +84,11 @@ export function useSquadMembers(squadId: string) {
         .eq('squad_id', squadId)
         .eq('status', 'approved');
       if (error) throw new Error(error.message);
-      return data as SquadMember[];
+      return data.map(member => ({
+        id: member.id,
+        status: member.status,
+        profiles: Array.isArray(member.profiles) ? member.profiles[0] : member.profiles
+      })) as SquadMember[];
     },
     enabled: !!squadId,
   });
