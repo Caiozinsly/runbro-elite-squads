@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from '@/components/ui/use-toast';
+import { useParams } from 'react-router-dom';
 
-// --- INTERFACES ---
-// Usada na página principal para listar os squads
+// Interfaces
 export interface SquadListItem {
   id: string;
   nome: string;
@@ -15,17 +15,10 @@ export interface SquadListItem {
   periodo_calculado: 'manha' | 'tarde' | 'noite';
   member_count: number;
   capa_url: string | null;
-  horario: string | null;
-  is_public: boolean;
-  admin_username: string | null;
-  admin_avatar_url: string | null;
-  codigo_convite: string | null;
 }
 
-// Usada na página de detalhes de um squad
 export interface SquadDetail {
   id: string;
-  created_at: string;
   admin_id: string;
   nome: string;
   cidade: string;
@@ -37,10 +30,8 @@ export interface SquadDetail {
   admin_username: string;
   admin_avatar_url: string | null;
   is_public: boolean;
-  capa_url: string | null;
 }
 
-// Usada para representar um membro de um squad
 export interface SquadMember {
   id: string;
   status: 'pending' | 'approved' | 'rejected';
@@ -51,9 +42,8 @@ export interface SquadMember {
   };
 }
 
-// --- HOOKS ---
+// Hooks
 
-// Hook para a página EXPLORAR SQUADS (usa a função RPC otimizada)
 export function useSquads() {
   return useQuery({
     queryKey: ['squads-list'], 
@@ -65,22 +55,20 @@ export function useSquads() {
   });
 }
 
-// Hook para a PÁGINA DE DETALHES (usa a nova função RPC)
 export function useSquad(squadId: string) {
   return useQuery({
     queryKey: ['squad', squadId],
     queryFn: async () => {
       const { data, error } = await supabase
         .rpc('get_squad_details', { squad_id_param: squadId })
-        .maybeSingle();
+        .single();
       if (error) throw new Error(error.message);
-      return data as SquadDetail | null;
+      return data as SquadDetail;
     },
     enabled: !!squadId,
   });
 }
 
-// Hook para buscar os MEMBROS APROVADOS de um squad
 export function useSquadMembers(squadId: string) {
   return useQuery({
     queryKey: ['squad-members', squadId],
@@ -91,29 +79,28 @@ export function useSquadMembers(squadId: string) {
         .eq('squad_id', squadId)
         .eq('status', 'approved');
       if (error) throw new Error(error.message);
-      return data as any[];
+      return data as SquadMember[];
     },
     enabled: !!squadId,
   });
 }
 
-// Hook para o ADMIN buscar TODOS os membros (incluindo pendentes)
 export function useSquadAdminMembers(squadId: string) {
   return useQuery({
     queryKey: ['squad-admin-members', squadId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('squad_members')
-        .select('id, status, profiles(username, full_name, avatar_url)')
+        .select(`id, status, profiles!inner(username, full_name, avatar_url)`)
         .eq('squad_id', squadId);
+
       if (error) throw new Error(error.message);
-      return data as any[];
+      return data.filter(member => member.profiles) as any[];
     },
     enabled: !!squadId,
   });
 }
 
-// Hook para PEDIR PARA ENTRAR num squad
 export function useJoinSquad() {
   const queryClient = useQueryClient();
   const { user, profile } = useAuth();
@@ -126,7 +113,7 @@ export function useJoinSquad() {
       if (error) throw error;
     },
     onSuccess: (_, squadId) => {
-      queryClient.invalidateQueries({ queryKey: ['squad-members', squadId] });
+      queryClient.invalidateQueries({ queryKey: ['user-squad-status', squadId] });
       toast({ title: "Solicitação enviada!" });
     },
     onError: (error: any) => {
@@ -135,7 +122,6 @@ export function useJoinSquad() {
   });
 }
 
-// Hook para o admin ATUALIZAR o status de um membro
 export function useUpdateMemberStatus(squadId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -157,7 +143,6 @@ export function useUpdateMemberStatus(squadId: string) {
   });
 }
 
-// Hook para o admin REMOVER um membro
 export function useRemoveMember(squadId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -179,22 +164,21 @@ export function useRemoveMember(squadId: string) {
   });
 }
 
-// Hook para verificar o status de um utilizador num squad
 export function useUserSquadStatus(squadId: string) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   return useQuery({
     queryKey: ['user-squad-status', squadId, user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user || !profile) return null;
       const { data, error } = await supabase
         .from('squad_members')
         .select('status')
         .eq('squad_id', squadId)
-        .eq('user_id', user.id)
+        .eq('user_id', profile.id)
         .maybeSingle();
       if (error) throw error;
       return data;
     },
-    enabled: !!user && !!squadId,
+    enabled: !!user && !!squadId && !!profile,
   });
 }

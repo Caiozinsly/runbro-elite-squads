@@ -12,6 +12,11 @@ interface Profile {
   updated_at: string | null;
   cards_completados: number;
   km_percorridos: number;
+  // Colunas do Strava adicionadas
+  strava_access_token?: string | null;
+  strava_refresh_token?: string | null;
+  strava_token_expires_at?: string | null;
+  strava_athlete_id?: string | null;
 }
 
 
