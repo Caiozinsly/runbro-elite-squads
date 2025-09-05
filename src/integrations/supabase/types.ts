@@ -172,6 +172,10 @@ export type Database = {
           id: string
           km_percorridos: number | null
           points: number | null
+          strava_access_token: string | null
+          strava_athlete_id: string | null
+          strava_refresh_token: string | null
+          strava_token_expires_at: string | null
           updated_at: string | null
           username: string
         }
@@ -183,6 +187,10 @@ export type Database = {
           id: string
           km_percorridos?: number | null
           points?: number | null
+          strava_access_token?: string | null
+          strava_athlete_id?: string | null
+          strava_refresh_token?: string | null
+          strava_token_expires_at?: string | null
           updated_at?: string | null
           username: string
         }
@@ -194,6 +202,10 @@ export type Database = {
           id?: string
           km_percorridos?: number | null
           points?: number | null
+          strava_access_token?: string | null
+          strava_athlete_id?: string | null
+          strava_refresh_token?: string | null
+          strava_token_expires_at?: string | null
           updated_at?: string | null
           username?: string
         }
@@ -367,6 +379,10 @@ export type Database = {
       add_kms: {
         Args: { kms_to_add: number; user_id: string }
         Returns: undefined
+      }
+      delete_squad: {
+        Args: { squad_id_param: string }
+        Returns: boolean
       }
       generate_invite_code: {
         Args: Record<PropertyKey, never>
