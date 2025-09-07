@@ -29,6 +29,7 @@ interface Squad {
   id: string;
   nome: string;
   cidade: string;
+  capa_url: string | null;
 }
 
 const ProfilePage = () => {
@@ -230,7 +231,14 @@ const ProfilePage = () => {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">Você ainda não criou nenhum squad.</p>
+    <div className="space-y-2">
+      <Button asChild className="w-full">
+        <Link to="/squads/criar">Criar Novo Squad</Link>
+      </Button>
+      <Button asChild variant="outline" className="w-full">
+        <Link to="/squads">Explorar Squads</Link>
+      </Button>
+    </div>
         )}
       </section>
     </main>
