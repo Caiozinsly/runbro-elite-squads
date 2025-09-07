@@ -107,10 +107,22 @@ export default function CreateSquadForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 glass p-8 rounded-xl">
-      <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do Squad" required />
-      <Input id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Cidade" required />
-      <Textarea id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descreva o objetivo e a vibe do seu squad." required />
-      <Input id="pontoPartida" value={pontoPartida} onChange={(e) => setPontoPartida(e.target.value)} placeholder="Ponto de partida" required />
+      <div>
+        <Label htmlFor="nome" className="text-sm font-medium">Nome do Squad (mín. 3 caracteres)</Label>
+        <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do Squad" required minLength={3} />
+      </div>
+      <div>
+        <Label htmlFor="cidade" className="text-sm font-medium">Cidade (mín. 2 caracteres)</Label>
+        <Input id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Cidade" required minLength={2} />
+      </div>
+      <div>
+        <Label htmlFor="descricao" className="text-sm font-medium">Descrição (mín. 10 caracteres)</Label>
+        <Textarea id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descreva o objetivo e a vibe do seu squad." required minLength={10} />
+      </div>
+      <div>
+        <Label htmlFor="pontoPartida" className="text-sm font-medium">Ponto de partida (mín. 5 caracteres)</Label>
+        <Input id="pontoPartida" value={pontoPartida} onChange={(e) => setPontoPartida(e.target.value)} placeholder="Ponto de partida" required minLength={5} />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>

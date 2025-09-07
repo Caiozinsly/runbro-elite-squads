@@ -130,23 +130,25 @@ export const EditProfileForm = ({ onClose }: EditProfileFormProps) => {
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="username">Nome de usuário</Label>
+          <Label htmlFor="username">Nome de usuário (mín. 3 caracteres)</Label>
           <Input
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Seu nome de usuário"
             required
+            minLength={3}
           />
         </div>
 
         <div>
-          <Label htmlFor="fullName">Nome completo</Label>
+          <Label htmlFor="fullName">Nome completo (mín. 2 caracteres)</Label>
           <Input
             id="fullName"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             placeholder="Seu nome completo"
+            minLength={2}
           />
         </div>
       </div>

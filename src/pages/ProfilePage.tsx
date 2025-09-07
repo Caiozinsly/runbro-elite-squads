@@ -30,6 +30,9 @@ interface Squad {
   nome: string;
   cidade: string;
   capa_url: string | null;
+  codigo_convite: string | null;
+  is_public: boolean;
+  member_count?: number;
 }
 
 const ProfilePage = () => {
@@ -60,13 +63,28 @@ const ProfilePage = () => {
       setLoadingSquads(true);
       const { data, error } = await supabase
         .from('squads')
-        .select('id, nome, cidade, capa_url')
+        .select(`
+          id, nome, cidade, capa_url, codigo_convite, is_public
+        `)
         .eq('admin_id', user.id);
-
-      if (error) {
+        
+      if (!error && data) {
+        // Buscar contagem de membros aprovados para cada squad
+        const squadsWithCounts = await Promise.all(
+          data.map(async (squad) => {
+            const { count } = await supabase
+              .from('squad_members')
+              .select('*', { count: 'exact', head: true })
+              .eq('squad_id', squad.id)
+              .eq('status', 'approved');
+              
+            return { ...squad, member_count: count || 0 };
+          })
+        );
+        
+        setMeusSquads(squadsWithCounts);
+      } else if (error) {
         console.error("Erro ao buscar squads do utilizador:", error);
-      } else if (data) {
-        setMeusSquads(data);
       }
       setLoadingSquads(false);
     };
@@ -195,9 +213,19 @@ const ProfilePage = () => {
                           className="w-16 h-16 rounded-lg object-cover"
                         />
                       )}
-                      <div>
+                      <div className="flex-1">
                         <h3 className="font-semibold">{squad.nome}</h3>
                         <p className="text-sm text-muted-foreground">{squad.cidade}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs bg-secondary px-2 py-1 rounded">
+                            {squad.member_count || 0} membros
+                          </span>
+                          {!squad.is_public && squad.codigo_convite && (
+                            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-mono">
+                              Código: {squad.codigo_convite}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </Link>
