@@ -56,6 +56,42 @@ export type Database = {
           },
         ]
       }
+      challenges: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          descricao: string | null
+          distancia_km: number
+          id: string
+          nome: string
+          pontos_recompensa: number
+          tempo_limite_minutos: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          distancia_km: number
+          id?: string
+          nome: string
+          pontos_recompensa?: number
+          tempo_limite_minutos: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          distancia_km?: number
+          id?: string
+          nome?: string
+          pontos_recompensa?: number
+          tempo_limite_minutos?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       corridas: {
         Row: {
           created_at: string
@@ -208,6 +244,39 @@ export type Database = {
           strava_token_expires_at?: string | null
           updated_at?: string | null
           username?: string
+        }
+        Relationships: []
+      }
+      squad_challenge_completions: {
+        Row: {
+          challenge_id: string
+          completed_at: string
+          id: string
+          km_total: number
+          pace_medio: number
+          pontos_ganhos: number
+          squad_id: string
+          tempo_total_minutos: number
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string
+          id?: string
+          km_total: number
+          pace_medio: number
+          pontos_ganhos?: number
+          squad_id: string
+          tempo_total_minutos: number
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string
+          id?: string
+          km_total?: number
+          pace_medio?: number
+          pontos_ganhos?: number
+          squad_id?: string
+          tempo_total_minutos?: number
         }
         Relationships: []
       }

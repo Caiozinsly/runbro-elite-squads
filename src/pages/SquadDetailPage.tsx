@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useSquad, useSquadMembers, useJoinSquad, useUserSquadStatus } from "@/hooks/useSquads";
+import { useSquadChallengeCompletions } from "@/hooks/useChallenges";
 import SEO from "@/components/common/SEO";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { SquadAdminPanel } from "@/components/squads/SquadAdminPanel";
-import { Lock, Users, MapPin, Clock, Route } from "lucide-react";
+import { ChallengeCompletionCard } from "@/components/challenges/ChallengeCompletionCard";
+import { Lock, Users, MapPin, Clock, Route, Trophy } from "lucide-react";
 
 const SquadDetailPage = () => {
   const { squadId } = useParams<{ squadId: string }>();
@@ -16,6 +18,7 @@ const SquadDetailPage = () => {
   const { data: squad, isLoading: isLoadingSquad, error: squadError } = useSquad(squadId!);
   const { data: members, isLoading: isLoadingMembers } = useSquadMembers(squadId!);
   const { data: userStatus } = useUserSquadStatus(squadId!);
+  const { data: challengeCompletions, isLoading: isLoadingCompletions } = useSquadChallengeCompletions(squadId!);
   const { mutate: joinSquad, isPending: isJoining } = useJoinSquad();
 
   const isAdmin = user?.id === squad?.admin_id;
@@ -136,6 +139,25 @@ const SquadDetailPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Seção de Desafios Completados */}
+          {challengeCompletions && challengeCompletions.length > 0 && (
+            <div className="glass p-6 rounded-xl">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Trophy className="h-5 w-5" />
+                Desafios Completados
+              </h2>
+              {isLoadingCompletions ? (
+                <p className="text-sm text-muted-foreground">Carregando desafios...</p>
+              ) : (
+                <div className="space-y-4">
+                  {challengeCompletions.map((completion) => (
+                    <ChallengeCompletionCard key={completion.id} completion={completion} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         
         <aside className="space-y-6">

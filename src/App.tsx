@@ -22,6 +22,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import { DashboardPage } from './pages/DashboardPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import SupabaseTestPage from './pages/SupabaseTestPage';
+import { MasterAdmin } from './pages/MasterAdmin';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
                 <Route path="/mural" element={<Mural />} />
                 <Route path="/parceiros" element={<Parceiros />} />
                 <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+                <Route path="/master-admin" element={<ProtectedRoute><MasterAdmin /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

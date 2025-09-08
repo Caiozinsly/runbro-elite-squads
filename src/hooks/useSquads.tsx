@@ -98,13 +98,37 @@ export function useSquadAdminMembers(squadId: string) {
   return useQuery({
     queryKey: ['squad-admin-members', squadId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Buscar membros do squad
+      const { data: membersData, error: membersError } = await supabase
         .from('squad_members')
-        .select(`id, status, profiles!inner(username, full_name, avatar_url)`)
+        .select(`id, status, user_id, profiles!inner(username, full_name, avatar_url)`)
         .eq('squad_id', squadId);
 
-      if (error) throw new Error(error.message);
-      return data.filter(member => member.profiles) as any[];
+      if (membersError) throw new Error(membersError.message);
+
+      // Buscar dados do admin do squad
+      const { data: squadData, error: squadError } = await supabase
+        .from('squads')
+        .select(`admin_id, profiles!inner(username, full_name, avatar_url)`)
+        .eq('id', squadId)
+        .single();
+
+      if (squadError) throw new Error(squadError.message);
+
+      const members = membersData?.filter(member => member.profiles) || [];
+      
+      // Adicionar o admin como membro aprovado se não estiver na lista
+      const isAdminInMembers = members.some(member => member.user_id === squadData.admin_id);
+      if (!isAdminInMembers && squadData.profiles) {
+        members.push({
+          id: `admin-${squadData.admin_id}`,
+          status: 'approved',
+          user_id: squadData.admin_id,
+          profiles: squadData.profiles
+        });
+      }
+
+      return members as any[];
     },
     enabled: !!squadId,
   });
