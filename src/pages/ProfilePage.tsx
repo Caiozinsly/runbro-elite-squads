@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link as LinkIcon, Edit, Trash2, Bell } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EditProfileForm } from "@/components/profile/EditProfileForm";
+import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
 import { useDeleteSquad } from "@/hooks/useDeleteSquad";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -189,6 +190,11 @@ const ProfilePage = () => {
           <div className="text-2xl font-bold">{profile.km_percorridos} km</div>
           <div className="text-sm text-muted-foreground">Percorridos</div>
         </div>
+      </section>
+
+      {/* Coleção NFT */}
+      <section className="mb-10">
+        <UserNFTCollection />
       </section>
 
       {/* Secção Meus Squads (o seu código, com a navegação corrigida) */}

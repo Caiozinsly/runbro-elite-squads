@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import { NFTAdminPanel } from "@/components/nft/NFTAdminPanel";
 
 export const MasterAdminPanel = () => {
   const { data: challenges, isLoading } = useAllChallenges();
@@ -87,14 +89,25 @@ export const MasterAdminPanel = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Painel Admin Master - Desafios</h2>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Desafio
-            </Button>
-          </DialogTrigger>
+        <h2 className="text-2xl font-bold">Painel Admin Master</h2>
+      </div>
+
+      <Tabs defaultValue="desafios" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="desafios">Desafios</TabsTrigger>
+          <TabsTrigger value="nfts">Recompensas NFT</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="desafios" className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-bold">Gerenciar Desafios</h3>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={resetForm}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Desafio
+                </Button>
+              </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>
@@ -182,13 +195,13 @@ export const MasterAdminPanel = () => {
                   {editingChallenge ? 'Atualizar' : 'Criar'}
                 </Button>
               </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+          </div>
 
-      <div className="grid gap-4">
-        {challenges?.map((challenge) => (
+          <div className="grid gap-4">
+            {challenges?.map((challenge) => (
           <Card key={challenge.id} className={!challenge.ativo ? 'opacity-60' : ''}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
@@ -219,11 +232,17 @@ export const MasterAdminPanel = () => {
             {challenge.descricao && (
               <CardContent className="pt-0">
                 <p className="text-sm text-muted-foreground">{challenge.descricao}</p>
-              </CardContent>
-            )}
-          </Card>
-        ))}
-      </div>
+                </CardContent>
+              )}
+            </Card>
+          ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="nfts" className="space-y-6">
+          <NFTAdminPanel />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

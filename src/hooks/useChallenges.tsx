@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
+import { useSortearNFT } from './useNFTRewards';
 
 export interface Challenge {
   id: string;
@@ -154,6 +155,8 @@ export function useDeleteChallenge() {
 
 export function useCompleteSquadChallenge() {
   const queryClient = useQueryClient();
+  const sortearNFT = useSortearNFT();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (completion: {
@@ -173,8 +176,23 @@ export function useCompleteSquadChallenge() {
       if (error) throw error;
       return data;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: async (completionData, variables) => {
       queryClient.invalidateQueries({ queryKey: ['squad-challenge-completions', variables.squad_id] });
+      
+      // Sortear NFT após completar o desafio
+      if (user && completionData) {
+        try {
+          await sortearNFT.mutateAsync({
+            user_id: user.id,
+            squad_id: variables.squad_id,
+            challenge_completion_id: completionData.id,
+            distancia_km: variables.km_total
+          });
+        } catch (error) {
+          console.error('Erro ao sortear NFT:', error);
+        }
+      }
+      
       toast({ title: "Desafio completado com sucesso!" });
     },
     onError: (error: any) => {
