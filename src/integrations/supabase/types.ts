@@ -169,6 +169,42 @@ export type Database = {
           },
         ]
       }
+      nft_rewards: {
+        Row: {
+          ativo: boolean
+          classificacao: string
+          created_at: string
+          descricao: string | null
+          id: string
+          imagem_url: string
+          nome: string
+          raridade: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          classificacao: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          imagem_url: string
+          nome: string
+          raridade?: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          classificacao?: string
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          imagem_url?: string
+          nome?: string
+          raridade?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       perfis: {
         Row: {
           avatar_url: string | null
@@ -385,6 +421,62 @@ export type Database = {
           },
         ]
       }
+      user_nft_collection: {
+        Row: {
+          challenge_completion_id: string | null
+          conquistado_em: string
+          id: string
+          nft_reward_id: string
+          squad_id: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_completion_id?: string | null
+          conquistado_em?: string
+          id?: string
+          nft_reward_id: string
+          squad_id?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_completion_id?: string | null
+          conquistado_em?: string
+          id?: string
+          nft_reward_id?: string
+          squad_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_nft_collection_challenge_completion_id_fkey"
+            columns: ["challenge_completion_id"]
+            isOneToOne: false
+            referencedRelation: "squad_challenge_completions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_nft_collection_nft_reward_id_fkey"
+            columns: ["nft_reward_id"]
+            isOneToOne: false
+            referencedRelation: "nft_rewards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_nft_collection_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_nft_collection_squad_id_fkey"
+            columns: ["squad_id"]
+            isOneToOne: false
+            referencedRelation: "squads_com_periodo"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       squads_com_periodo: {
@@ -501,6 +593,15 @@ export type Database = {
       increment_cards: {
         Args: { user_id: string }
         Returns: undefined
+      }
+      sortear_nft_recompensa: {
+        Args: {
+          p_challenge_completion_id: string
+          p_distancia_km: number
+          p_squad_id: string
+          p_user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
